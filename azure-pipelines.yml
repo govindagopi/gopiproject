@@ -1,25 +1,26 @@
 trigger:
-  branches:
-    include:
-      - master
-      - develop/*
-  paths:
-    include:
-      - '*'
+- master
+- develop
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- checkout: self
+  persistCredentials: true
+
 - script: |
     # Construct the tag name using the current date and time
     tag=$(date +"%Y%m%d-%H%M%S")
     git tag $tag
     git push origin $tag
   displayName: 'Create Git tag'
+
+- script: echo "Hello, World!"
   condition: |
     and(
       succeeded(),
       eq(variables['Build.Reason'], 'PullRequest'),
       eq(variables['Build.SourceBranch'], 'refs/heads/master')
     )
+  displayName: 'Run only for pull request to master'
