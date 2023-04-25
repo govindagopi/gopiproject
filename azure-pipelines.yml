@@ -1,17 +1,11 @@
 trigger:
   branches:
     include:
-      - main
-      - feature/*
-    - refs/pull/*/merge:
-      types: [merged]
-      condition: |
-        and(
-          succeeded(),
-          eq(variables['System.PullRequest.IsDraft'], 'false'),
-          contains(variables['System.PullRequest.SourceBranch'], 'feature/'),
-          eq(variables['System.PullRequest.Approvals'], '1')
-        )
+      - master
+      - develop/*
+  paths:
+    include:
+      - '*'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -23,4 +17,9 @@ steps:
     git tag $tag
     git push origin $tag
   displayName: 'Create Git tag'
-
+  condition: |
+    and(
+      succeeded(),
+      eq(variables['Build.Reason'], 'PullRequest'),
+      eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    )
