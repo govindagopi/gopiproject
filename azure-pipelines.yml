@@ -23,3 +23,4 @@ steps:
     git tag $tag
     git push origin $tag
   displayName: 'Create Git tag'
+
