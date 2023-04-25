@@ -3,7 +3,7 @@ trigger:
     include:
       - main
       - feature/*
-  - refs/pull/*/merge:
+    - refs/pull/*/merge:
       types: [merged]
       condition: |
         and(
@@ -18,7 +18,9 @@ pool:
 
 steps:
 - script: |
+    # Construct the tag name using the current date and time
     tag=$(date +"%Y%m%d-%H%M%S")
     git tag $tag
     git push origin $tag
   displayName: 'Create Git tag'
+
