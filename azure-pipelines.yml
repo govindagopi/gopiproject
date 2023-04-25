@@ -1,0 +1,27 @@
+trigger:
+  branches:
+    include:
+      - main
+      - feature/*
+  # Trigger the pipeline when a pull request is merged
+  - refs/pull/*/merge:
+    types: [merged]
+    # Only trigger the pipeline if the pull request was approved
+    condition: |
+      and(
+        succeeded(),
+        eq(variables['System.PullRequest.IsDraft'], 'false'),
+        contains(variables['System.PullRequest.SourceBranch'], 'feature/'),
+        eq(variables['System.PullRequest.Approvals'], '1')
+      )
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: |
+    # Construct the tag name using the current date and time
+    tag=$(date +"%Y%m%d-%H%M%S")
+    git tag $tag
+    git push origin $tag
+  displayName: 'Create Git tag'
