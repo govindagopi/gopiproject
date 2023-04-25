@@ -1,6 +1,7 @@
 trigger:
-- master
-- develop
+  branches:
+    include:
+      - develop
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -8,19 +9,12 @@ pool:
 steps:
 - checkout: self
   persistCredentials: true
+  clean: true
 
 - script: |
-    # Construct the tag name using the current date and time
-    tag=$(date +"%Y%m%d-%H%M%S")
-    git tag $tag
-    git push origin $tag
-  displayName: 'Create Git tag'
-
-- script: echo "Hello, World!"
-  condition: |
-    and(
-      succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['Build.SourceBranch'], 'refs/heads/master')
-    )
-  displayName: 'Run only for pull request to master'
+    git config user.email "you@example.com"
+    git config user.name "Your Name"
+    git merge --no-ff origin/develop
+    git tag -a $(date +"%Y%m%d%H%M%S") -m "Merge from develop"
+    git push origin master --tags
+  displayName: 'Merge and tag changes'
