@@ -1,9 +1,11 @@
 trigger:
   branches:
     include:
-      - main
-      - feature/*
-    - refs/pull/*/merge
+      - master
+      - develop/*
+  paths:
+    include:
+      - '*'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -16,13 +18,8 @@ steps:
     git push origin $tag
   displayName: 'Create Git tag'
   condition: |
-        and(
-          succeeded(),
-          ne(variables['Build.Reason'], 'PullRequest'),
-          or(
-            eq(variables['Build.SourceBranchName'], 'main'),
-            startsWith(variables['Build.SourceBranchName'], 'feature/')
-          ),
-          eq(variables['Build.SourceBranch'], variables['Build.SourceVersion']),
-          eq(variables['Build.Reason'], 'IndividualCI')
-        )
+    and(
+      succeeded(),
+      eq(variables['Build.Reason'], 'PullRequest'),
+      eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    )
