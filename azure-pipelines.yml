@@ -4,16 +4,16 @@ trigger:
       - main
       - feature/*
   # Trigger the pipeline when a pull request is merged
-  - refs/pull/*/merge:
-    types: [merged]
+    - refs/pull/*/merge:
+      types: [merged]
     # Only trigger the pipeline if the pull request was approved
-    condition: |
-      and(
+      condition: |
+       and(
         succeeded(),
         eq(variables['System.PullRequest.IsDraft'], 'false'),
         contains(variables['System.PullRequest.SourceBranch'], 'feature/'),
         eq(variables['System.PullRequest.Approvals'], '1')
-      )
+       )
 
 pool:
   vmImage: 'ubuntu-latest'
